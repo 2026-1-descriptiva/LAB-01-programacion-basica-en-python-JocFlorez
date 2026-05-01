@@ -4,7 +4,28 @@ datos requeridos se encuentran en el archivo data.csv. En este laboratorio
 solo puede utilizar las funciones y librerias basicas de python. No puede
 utilizar pandas, numpy o scipy.
 """
+from homework.utils import lectura_datos
 
+def mapper(data):
+    result={}
+    for line in data:
+        clave=int(line.split("\t")[1])
+        valor=line.split("\t")[0]
+        if clave not in result:
+            result[clave]= {valor}
+        else:
+            result[clave].add(valor)
+    return result
+
+def reducer(data):
+    result=[]
+    for clave, valor in data.items():
+        result.append((clave, sorted(valor)))
+    return result
+
+def ordenar(result):
+    result_ordenado=sorted(result)
+    return result_ordenado
 
 def pregunta_08():
     """
@@ -27,3 +48,8 @@ def pregunta_08():
      (9, ['A', 'B', 'C', 'E'])]
 
     """
+    data = lectura_datos()
+    map= mapper(data)       
+    reduce= reducer(map)
+    result= ordenar(reduce)
+    return result

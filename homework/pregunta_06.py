@@ -5,6 +5,35 @@ solo puede utilizar las funciones y librerias basicas de python. No puede
 utilizar pandas, numpy o scipy.
 """
 
+from homework.utils import lectura_datos
+
+def mapper(data):
+    result=[]
+    for line in data:
+        dict={}
+        for item in line.split("\t")[4].split(","):
+            clave=item.split(":")[0]
+            valor=int(item.split(":")[1])
+            dict[clave]=valor
+        result.append(dict)
+    return result
+
+def reducer(data):
+    result={}
+    for dict in data:
+        for clave, valor in dict.items():
+            if clave not in result:
+                result[clave]= [valor, valor]
+            else:
+                if valor < result[clave][0]:
+                    result[clave][0]=valor
+                if valor > result[clave][1]:
+                    result[clave][1]=valor
+    return result
+
+def ordenar(result):
+    result_ordenado=sorted(result.items())
+    return result_ordenado
 
 def pregunta_06():
     """
@@ -26,3 +55,9 @@ def pregunta_06():
      ('jjj', 5, 17)]
 
     """
+    data= lectura_datos()
+    map= mapper(data)
+    reduce= reducer(map)
+    result= ordenar(reduce)
+    final_result=[(clave, *max_min) for clave, max_min in result]
+    return final_result
